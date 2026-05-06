@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Carrinho — CuboMagic</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root { --red: #e63946; --blue: #1d3557; --blue-light: #457b9d; --white: #f1faee; --accent: #a8dadc; --bg: #0d1b2a; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Nunito', sans-serif; background: var(--bg); color: var(--white); }
+
+    nav { display: flex; align-items: center; justify-content: space-between; padding: 1rem 2rem; background: var(--blue); position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 20px rgba(0,0,0,0.4); }
+    .logo { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; letter-spacing: 3px; color: var(--white); text-decoration: none; display: flex; align-items: center; gap: 10px; }
+    .logo span { color: var(--red); }
+    .logo .cube-icon { width: 36px; height: 36px; display: grid; grid-template-columns: 1fr 1fr; gap: 3px; }
+    .logo .cube-icon div { border-radius: 2px; }
+    .logo .cube-icon div:nth-child(1) { background: var(--red); }
+    .logo .cube-icon div:nth-child(2) { background: #fff; }
+    .logo .cube-icon div:nth-child(3) { background: #fff; }
+    .logo .cube-icon div:nth-child(4) { background: var(--red); }
+    nav ul { list-style: none; display: flex; gap: 1.5rem; }
+    nav ul a { color: var(--accent); text-decoration: none; font-weight: 700; font-size: 0.95rem; transition: color 0.2s; }
+    nav ul a:hover { color: var(--red); }
+    .cart-btn { background: var(--red); color: #fff; border: none; padding: 0.5rem 1.2rem; border-radius: 8px; font-family: 'Nunito', sans-serif; font-weight: 800; cursor: pointer; font-size: 0.9rem; display: flex; align-items: center; gap: 6px; text-decoration: none; }
+    #cart-count { background: #fff; color: var(--red); border-radius: 50%; width: 20px; height: 20px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 800; }
+
+    .page-header { background: var(--blue); padding: 3rem 2rem; text-align: center; }
+    .page-header h1 { font-family: 'Bebas Neue', sans-serif; font-size: 3.5rem; letter-spacing: 3px; }
+    .page-header h1 span { color: var(--red); }
+
+    .cart-layout { max-width: 1100px; margin: 3rem auto; padding: 0 2rem; display: grid; grid-template-columns: 1fr 340px; gap: 2rem; align-items: start; }
+    .cart-items { display: flex; flex-direction: column; gap: 1rem; }
+    .cart-item { background: var(--blue); border-radius: 14px; padding: 1.2rem; display: flex; align-items: center; gap: 1.2rem; }
+    .item-emoji { font-size: 3rem; min-width: 60px; text-align: center; }
+    .item-info { flex: 1; }
+    .item-name { font-weight: 800; font-size: 1rem; margin-bottom: 0.2rem; }
+    .item-price { color: var(--red); font-weight: 800; font-size: 1.1rem; }
+    .item-controls { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.5rem; }
+    .qty-btn { background: rgba(255,255,255,0.1); color: var(--white); border: none; width: 28px; height: 28px; border-radius: 6px; font-size: 1rem; cursor: pointer; transition: background 0.2s; }
+    .qty-btn:hover { background: var(--red); }
+    .qty-num { font-weight: 800; width: 30px; text-align: center; }
+    .remove-btn { background: transparent; color: var(--accent); border: none; cursor: pointer; font-size: 1.2rem; margin-left: auto; transition: color 0.2s; }
+    .remove-btn:hover { color: var(--red); }
+
+    .cart-empty { text-align: center; padding: 5rem 2rem; color: var(--accent); }
+    .cart-empty h2 { font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem; color: var(--red); margin-bottom: 1rem; }
+    .cart-empty a { color: var(--red); font-weight: 800; text-decoration: none; }
+
+    .order-summary { background: var(--blue); border-radius: 16px; padding: 1.5rem; position: sticky; top: 80px; }
+    .summary-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; letter-spacing: 2px; margin-bottom: 1.5rem; }
+    .summary-row { display: flex; justify-content: space-between; color: var(--accent); font-size: 0.9rem; margin-bottom: 0.7rem; }
+    .summary-total { display: flex; justify-content: space-between; font-weight: 800; font-size: 1.2rem; color: var(--white); border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1rem; margin-top: 1rem; }
+    .summary-total span:last-child { color: var(--red); }
+    .checkout-btn { width: 100%; background: var(--red); color: #fff; border: none; padding: 1rem; border-radius: 12px; font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 1.1rem; cursor: pointer; transition: background 0.2s, transform 0.2s; margin-top: 1.2rem; }
+    .checkout-btn:hover { background: #c1121f; transform: translateY(-2px); }
+    .clear-btn { width: 100%; background: transparent; color: var(--accent); border: 2px solid rgba(255,255,255,0.15); padding: 0.7rem; border-radius: 12px; font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 0.9rem; cursor: pointer; margin-top: 0.7rem; transition: all 0.2s; }
+    .clear-btn:hover { border-color: var(--red); color: var(--red); }
+
+    /* Relatório localStorage */
+    .storage-report { max-width: 1100px; margin: 0 auto 4rem; padding: 0 2rem; }
+    .report-card { background: var(--blue); border-radius: 16px; padding: 1.5rem; }
+    .report-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; letter-spacing: 2px; margin-bottom: 1rem; color: var(--accent); }
+    .report-code { background: #080f1a; border-radius: 10px; padding: 1rem; font-family: monospace; font-size: 0.82rem; color: #a8dadc; overflow-x: auto; white-space: pre-wrap; word-break: break-all; }
+
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 200; align-items: center; justify-content: center; }
+    .modal-overlay.show { display: flex; }
+    .modal { background: var(--blue); border-radius: 16px; padding: 2rem; max-width: 400px; width: 90%; text-align: center; }
+    .modal h3 { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; margin-bottom: 1rem; }
+    .modal p { color: var(--accent); margin-bottom: 1.5rem; }
+    .modal-btns { display: flex; gap: 1rem; justify-content: center; }
+    .modal-btns button { padding: 0.7rem 1.5rem; border-radius: 10px; font-family: 'Nunito', sans-serif; font-weight: 800; cursor: pointer; border: none; }
+    .btn-confirm { background: var(--red); color: #fff; }
+    .btn-cancel { background: transparent; color: var(--accent); border: 2px solid var(--accent) !important; }
+
+    .toast { position: fixed; bottom: 2rem; right: 2rem; background: var(--red); color: #fff; padding: 1rem 1.5rem; border-radius: 10px; font-weight: 700; font-size: 0.95rem; transform: translateY(100px); opacity: 0; transition: all 0.3s; z-index: 999; }
+    .toast.show { transform: translateY(0); opacity: 1; }
+
+    footer { background: #080f1a; padding: 2rem; text-align: center; color: var(--accent); font-size: 0.85rem; }
+
+    @media (max-width: 750px) {
+      .cart-layout { grid-template-columns: 1fr; }
+      nav ul { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="logo">
+    <div class="cube-icon"><div></div><div></div><div></div><div></div></div>
+    Cubo<span>Magic</span>
+  </a>
+  <ul>
+    <li><a href="index.html">Início</a></li>
+    <li><a href="produtos.html">Produtos</a></li>
+    <li><a href="sobre.html">Sobre</a></li>
+    <li><a href="login.html">Login</a></li>
+  </ul>
+  <a href="carrinho.html" class="cart-btn">🛒 Carrinho <span id="cart-count">0</span></a>
+</nav>
+
+<div class="page-header">
+  <h1>MEU <span>CARRINHO</span></h1>
+</div>
+
+<div id="cart-content"></div>
+
+<!-- Relatório localStorage -->
+<div class="storage-report">
+  <div class="report-card">
+    <div class="report-title">📦 RELATÓRIO DO LOCALSTORAGE</div>
+    <div class="report-code" id="storage-report">Carregando...</div>
+  </div>
+</div>
+
+<!-- Modal de confirmação de compra -->
+<div class="modal-overlay" id="checkout-modal">
+  <div class="modal">
+    <h3>🎉 Pedido Confirmado!</h3>
+    <p>Seu pedido foi realizado com sucesso! Em breve você receberá seus cubos.</p>
+    <div class="modal-btns">
+      <button class="btn-confirm" onclick="finishOrder()">Ótimo!</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<footer><p>© 2026 CuboMagic.</p></footer>
+
+<script src="app.js"></script>
+<script>
+  function renderCart() {
+    const cart = getCart();
+    const content = document.getElementById('cart-content');
+
+    if (cart.length === 0) {
+      content.innerHTML = `
+        <div class="cart-empty">
+          <h2>Carrinho Vazio</h2>
+          <p>Você ainda não adicionou nenhum produto.</p>
+          <br><a href="produtos.html">← Ver Produtos</a>
+        </div>`;
+    } else {
+      const subtotal = cart.reduce((acc, i) => acc + (i.price * i.qty), 0);
+      const frete = subtotal >= 99 ? 0 : 15.90;
+      const total = subtotal + frete;
+
+      let itemsHTML = '';
+      cart.forEach(item => {
+        itemsHTML += `
+          <div class="cart-item" id="item-${item.id}">
+            <div class="item-emoji">${item.emoji}</div>
+            <div class="item-info">
+              <div class="item-name">${item.name}</div>
+              <div class="item-price">R$ ${(item.price * item.qty).toFixed(2).replace('.',',')}</div>
+              <div class="item-controls">
+                <button class="qty-btn" onclick="changeItemQty(${item.id}, -1)">−</button>
+                <span class="qty-num">${item.qty}</span>
+                <button class="qty-btn" onclick="changeItemQty(${item.id}, 1)">+</button>
+              </div>
+            </div>
+            <button class="remove-btn" onclick="removeItem(${item.id})" title="Remover">🗑️</button>
+          </div>`;
+      });
+
+      content.innerHTML = `
+        <div class="cart-layout">
+          <div class="cart-items">${itemsHTML}</div>
+          <div class="order-summary">
+            <div class="summary-title">RESUMO</div>
+            <div class="summary-row"><span>Subtotal</span><span>R$ ${subtotal.toFixed(2).replace('.',',')}</span></div>
+            <div class="summary-row"><span>Frete</span><span>${frete === 0 ? '🎁 Grátis' : 'R$ ' + frete.toFixed(2).replace('.',',')}</span></div>
+            <div class="summary-total"><span>Total</span><span>R$ ${total.toFixed(2).replace('.',',')}</span></div>
+            <button class="checkout-btn" onclick="checkout()">✅ Finalizar Pedido</button>
+            <button class="clear-btn" onclick="confirmClear()">🗑️ Limpar Carrinho</button>
+          </div>
+        </div>`;
+    }
+
+    updateStorageReport();
+    updateCartCount();
+  }
+
+  function changeItemQty(id, delta) {
+    let cart = getCart();
+    const item = cart.find(i => i.id === id);
+    if (!item) return;
+    item.qty += delta;
+    if (item.qty <= 0) cart = cart.filter(i => i.id !== id);
+    saveCart(cart);
+    renderCart();
+  }
+
+  function removeItem(id) {
+    removeFromCart(id);
+    renderCart();
+    showToast('🗑️ Item removido do carrinho.');
+  }
+
+  function confirmClear() {
+    if (confirm('Tem certeza que deseja limpar o carrinho?')) {
+      clearCart();
+      renderCart();
+      showToast('🗑️ Carrinho esvaziado.');
+    }
+  }
+
+  function checkout() {
+    const user = getCurrentUser();
+    if (!user) {
+      showToast('⚠️ Faça login para finalizar o pedido!');
+      setTimeout(() => window.location.href = 'login.html', 1500);
+      return;
+    }
+    document.getElementById('checkout-modal').classList.add('show');
+  }
+
+  function finishOrder() {
+    clearCart();
+    document.getElementById('checkout-modal').classList.remove('show');
+    renderCart();
+    showToast('🎉 Pedido realizado com sucesso!');
+  }
+
+  function updateStorageReport() {
+    const cart = getCart();
+    const users = getUsers();
+    const currentUser = getCurrentUser();
+    const report = {
+      carrinho: cart,
+      usuarios_cadastrados: users.map(u => ({ nome: u.name, email: u.email })),
+      usuario_logado: currentUser ? currentUser.name : 'nenhum',
+      total_items_carrinho: cart.reduce((a, i) => a + i.qty, 0),
+      valor_total: 'R$ ' + cart.reduce((a, i) => a + i.price * i.qty, 0).toFixed(2).replace('.',',')
+    };
+    document.getElementById('storage-report').textContent = JSON.stringify(report, null, 2);
+  }
+
+  renderCart();
+</script>
+</body>
+</html>

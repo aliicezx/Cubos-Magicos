@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login — CuboMagic</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root { --red: #e63946; --blue: #1d3557; --blue-light: #457b9d; --white: #f1faee; --accent: #a8dadc; --bg: #0d1b2a; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Nunito', sans-serif; background: var(--bg); color: var(--white); min-height: 100vh; }
+
+    nav { display: flex; align-items: center; justify-content: space-between; padding: 1rem 2rem; background: var(--blue); position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 20px rgba(0,0,0,0.4); }
+    .logo { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; letter-spacing: 3px; color: var(--white); text-decoration: none; display: flex; align-items: center; gap: 10px; }
+    .logo span { color: var(--red); }
+    .logo .cube-icon { width: 36px; height: 36px; display: grid; grid-template-columns: 1fr 1fr; gap: 3px; }
+    .logo .cube-icon div { border-radius: 2px; }
+    .logo .cube-icon div:nth-child(1) { background: var(--red); }
+    .logo .cube-icon div:nth-child(2) { background: #fff; }
+    .logo .cube-icon div:nth-child(3) { background: #fff; }
+    .logo .cube-icon div:nth-child(4) { background: var(--red); }
+    nav ul { list-style: none; display: flex; gap: 1.5rem; }
+    nav ul a { color: var(--accent); text-decoration: none; font-weight: 700; font-size: 0.95rem; transition: color 0.2s; }
+    nav ul a:hover { color: var(--red); }
+    .cart-btn { background: var(--red); color: #fff; border: none; padding: 0.5rem 1.2rem; border-radius: 8px; font-family: 'Nunito', sans-serif; font-weight: 800; cursor: pointer; font-size: 0.9rem; display: flex; align-items: center; gap: 6px; text-decoration: none; }
+    #cart-count { background: #fff; color: var(--red); border-radius: 50%; width: 20px; height: 20px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 800; }
+
+    .auth-wrapper {
+      min-height: calc(100vh - 70px);
+      display: flex; align-items: center; justify-content: center;
+      padding: 3rem 1.5rem;
+      background: linear-gradient(135deg, var(--bg) 0%, #1a2a4a 100%);
+    }
+    .auth-container { width: 100%; max-width: 440px; }
+    .auth-logo { text-align: center; margin-bottom: 2rem; }
+    .auth-logo span { font-size: 3rem; }
+    .auth-logo h2 { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; letter-spacing: 3px; margin-top: 0.5rem; }
+    .auth-logo h2 em { color: var(--red); font-style: normal; }
+
+    .tabs { display: flex; background: var(--blue); border-radius: 12px; overflow: hidden; margin-bottom: 1.5rem; }
+    .tab-btn { flex: 1; padding: 0.8rem; border: none; background: transparent; color: var(--accent); font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 1rem; cursor: pointer; transition: all 0.2s; }
+    .tab-btn.active { background: var(--red); color: #fff; }
+
+    .auth-form { background: var(--blue); border-radius: 16px; padding: 2rem; }
+    .form-group { margin-bottom: 1.2rem; }
+    .form-group label { display: block; font-weight: 700; font-size: 0.9rem; color: var(--accent); margin-bottom: 0.4rem; }
+    .form-group input { width: 100%; padding: 0.8rem 1rem; background: rgba(255,255,255,0.07); border: 2px solid rgba(255,255,255,0.1); border-radius: 10px; color: var(--white); font-family: 'Nunito', sans-serif; font-size: 0.95rem; transition: border 0.2s; outline: none; }
+    .form-group input:focus { border-color: var(--red); }
+    .form-group input::placeholder { color: rgba(255,255,255,0.3); }
+
+    .submit-btn { width: 100%; background: var(--red); color: #fff; border: none; padding: 1rem; border-radius: 12px; font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 1.1rem; cursor: pointer; transition: background 0.2s, transform 0.2s; margin-top: 0.5rem; }
+    .submit-btn:hover { background: #c1121f; transform: translateY(-2px); }
+
+    .error-msg { background: rgba(230,57,70,0.15); border: 1px solid var(--red); color: var(--red); padding: 0.7rem 1rem; border-radius: 8px; font-size: 0.9rem; font-weight: 700; margin-bottom: 1rem; display: none; }
+    .success-msg { background: rgba(0,200,100,0.15); border: 1px solid #00c864; color: #00c864; padding: 0.7rem 1rem; border-radius: 8px; font-size: 0.9rem; font-weight: 700; margin-bottom: 1rem; display: none; }
+
+    .logged-in-card { background: var(--blue); border-radius: 16px; padding: 2.5rem; text-align: center; }
+    .logged-in-card .big-emoji { font-size: 4rem; margin-bottom: 1rem; }
+    .logged-in-card h3 { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; margin-bottom: 0.5rem; }
+    .logged-in-card p { color: var(--accent); margin-bottom: 1.5rem; }
+    .logout-btn { background: var(--red); color: #fff; border: none; padding: 0.8rem 2rem; border-radius: 10px; font-family: 'Nunito', sans-serif; font-weight: 800; cursor: pointer; font-size: 1rem; }
+    .goto-btn { display: inline-block; margin-top: 1rem; color: var(--accent); font-weight: 700; text-decoration: none; font-size: 0.9rem; }
+    .goto-btn:hover { color: var(--red); }
+
+    .toast { position: fixed; bottom: 2rem; right: 2rem; background: var(--red); color: #fff; padding: 1rem 1.5rem; border-radius: 10px; font-weight: 700; font-size: 0.95rem; transform: translateY(100px); opacity: 0; transition: all 0.3s; z-index: 999; }
+    .toast.show { transform: translateY(0); opacity: 1; }
+
+    @media (max-width: 600px) { nav ul { display: none; } }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="logo">
+    <div class="cube-icon"><div></div><div></div><div></div><div></div></div>
+    Cubo<span>Magic</span>
+  </a>
+  <ul>
+    <li><a href="index.html">Início</a></li>
+    <li><a href="produtos.html">Produtos</a></li>
+    <li><a href="sobre.html">Sobre</a></li>
+    <li><a href="login.html">Login</a></li>
+  </ul>
+  <a href="carrinho.html" class="cart-btn">🛒 Carrinho <span id="cart-count">0</span></a>
+</nav>
+
+<div class="auth-wrapper">
+  <div class="auth-container" id="auth-container">
+    <!-- Renderizado pelo JS -->
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="app.js"></script>
+<script>
+  function renderAuth() {
+    const user = getCurrentUser();
+    const container = document.getElementById('auth-container');
+
+    if (user) {
+      container.innerHTML = `
+        <div class="logged-in-card">
+          <div class="big-emoji">👋</div>
+          <h3>Olá, ${user.name}!</h3>
+          <p>Você está logado com <strong>${user.email}</strong></p>
+          <button class="logout-btn" onclick="logout()">Sair da Conta</button>
+          <br>
+          <a href="produtos.html" class="goto-btn">→ Ver Produtos</a>
+        </div>`;
+      return;
+    }
+
+    container.innerHTML = `
+      <div class="auth-logo">
+        <span><img src="cubologo.png" alt="Cubo Mágico" width="100" height="100" /></span>
+        <h2>CUBO<em>MAGIC</em></h2>
+      </div>
+      <div class="tabs">
+        <button class="tab-btn active" id="tab-login" onclick="switchTab('login')">Entrar</button>
+        <button class="tab-btn" id="tab-register" onclick="switchTab('register')">Cadastrar</button>
+      </div>
+      <div class="auth-form">
+        <div id="error-msg" class="error-msg"></div>
+        <div id="success-msg" class="success-msg"></div>
+        <div id="form-fields"></div>
+      </div>`;
+
+    renderLoginForm();
+  }
+
+  function switchTab(tab) {
+    document.getElementById('tab-login').classList.toggle('active', tab === 'login');
+    document.getElementById('tab-register').classList.toggle('active', tab === 'register');
+    document.getElementById('error-msg').style.display = 'none';
+    document.getElementById('success-msg').style.display = 'none';
+    if (tab === 'login') renderLoginForm(); else renderRegisterForm();
+  }
+
+  function renderLoginForm() {
+    document.getElementById('form-fields').innerHTML = `
+      <div class="form-group">
+        <label>E-mail</label>
+        <input type="email" id="login-email" placeholder="seu@email.com">
+      </div>
+      <div class="form-group">
+        <label>Senha</label>
+        <input type="password" id="login-pass" placeholder="••••••••">
+      </div>
+      <button class="submit-btn" onclick="doLogin()">Entrar</button>`;
+  }
+
+  function renderRegisterForm() {
+    document.getElementById('form-fields').innerHTML = `
+      <div class="form-group">
+        <label>Nome Completo</label>
+        <input type="text" id="reg-name" placeholder="Alice Cardoso">
+      </div>
+      <div class="form-group">
+        <label>E-mail</label>
+        <input type="email" id="reg-email" placeholder="seu@email.com">
+      </div>
+      <div class="form-group">
+        <label>Senha</label>
+        <input type="password" id="reg-pass" placeholder="mínimo 6 caracteres">
+      </div>
+      <div class="form-group">
+        <label>Confirmar Senha</label>
+        <input type="password" id="reg-pass2" placeholder="repita a senha">
+      </div>
+      <button class="submit-btn" onclick="doRegister()">Criar Conta</button>`;
+  }
+
+  function showError(msg) {
+    const el = document.getElementById('error-msg');
+    el.textContent = msg; el.style.display = 'block';
+    document.getElementById('success-msg').style.display = 'none';
+  }
+
+  function showSuccess(msg) {
+    const el = document.getElementById('success-msg');
+    el.textContent = msg; el.style.display = 'block';
+    document.getElementById('error-msg').style.display = 'none';
+  }
+
+  function doLogin() {
+    const email = document.getElementById('login-email').value.trim();
+    const pass = document.getElementById('login-pass').value;
+    if (!email || !pass) { showError('Preencha todos os campos!'); return; }
+    const users = getUsers();
+    const user = users.find(u => u.email === email && u.password === pass);
+    if (!user) { showError('E-mail ou senha incorretos.'); return; }
+    setCurrentUser({ name: user.name, email: user.email });
+    showToast(`✅ Bem-vindo de volta, ${user.name}!`);
+    setTimeout(() => renderAuth(), 1000);
+  }
+
+  function doRegister() {
+    const name = document.getElementById('reg-name').value.trim();
+    const email = document.getElementById('reg-email').value.trim();
+    const pass = document.getElementById('reg-pass').value;
+    const pass2 = document.getElementById('reg-pass2').value;
+    if (!name || !email || !pass || !pass2) { showError('Preencha todos os campos!'); return; }
+    if (pass.length < 6) { showError('Senha deve ter pelo menos 6 caracteres.'); return; }
+    if (pass !== pass2) { showError('As senhas não coincidem.'); return; }
+    const users = getUsers();
+    if (users.find(u => u.email === email)) { showError('Este e-mail já está cadastrado.'); return; }
+    users.push({ name, email, password: pass });
+    saveUsers(users);
+    showSuccess(`✅ Conta criada com sucesso! Faça login.`);
+    setTimeout(() => switchTab('login'), 1500);
+  }
+
+  renderAuth();
+  updateCartCount();
+</script>
+</body>
+</html>

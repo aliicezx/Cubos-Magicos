@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sobre — CuboMagic</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root { --red: #e63946; --blue: #1d3557; --blue-light: #457b9d; --white: #f1faee; --accent: #a8dadc; --bg: #0d1b2a; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Nunito', sans-serif; background: var(--bg); color: var(--white); }
+
+    nav { display: flex; align-items: center; justify-content: space-between; padding: 1rem 2rem; background: var(--blue); position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 20px rgba(0,0,0,0.4); }
+    .logo { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; letter-spacing: 3px; color: var(--white); text-decoration: none; display: flex; align-items: center; gap: 10px; }
+    .logo span { color: var(--red); }
+    .logo .cube-icon { width: 36px; height: 36px; display: grid; grid-template-columns: 1fr 1fr; gap: 3px; }
+    .logo .cube-icon div { border-radius: 2px; }
+    .logo .cube-icon div:nth-child(1) { background: var(--red); }
+    .logo .cube-icon div:nth-child(2) { background: #fff; }
+    .logo .cube-icon div:nth-child(3) { background: #fff; }
+    .logo .cube-icon div:nth-child(4) { background: var(--red); }
+    nav ul { list-style: none; display: flex; gap: 1.5rem; }
+    nav ul a { color: var(--accent); text-decoration: none; font-weight: 700; font-size: 0.95rem; transition: color 0.2s; }
+    nav ul a:hover, nav ul a.active { color: var(--red); }
+    .cart-btn { background: var(--red); color: #fff; border: none; padding: 0.5rem 1.2rem; border-radius: 8px; font-family: 'Nunito', sans-serif; font-weight: 800; cursor: pointer; font-size: 0.9rem; display: flex; align-items: center; gap: 6px; text-decoration: none; }
+    #cart-count { background: #fff; color: var(--red); border-radius: 50%; width: 20px; height: 20px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 800; }
+
+    .hero-about {
+      background: linear-gradient(135deg, var(--blue) 0%, #0d1b2a 100%);
+      padding: 6rem 2rem; text-align: center;
+    }
+    .hero-about h1 { font-family: 'Bebas Neue', sans-serif; font-size: 4rem; letter-spacing: 4px; }
+    .hero-about h1 span { color: var(--red); }
+    .hero-about p { color: var(--accent); max-width: 600px; margin: 1rem auto 0; font-size: 1.05rem; line-height: 1.7; }
+
+    .content { max-width: 1000px; margin: 0 auto; padding: 4rem 2rem; }
+
+    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; margin-bottom: 4rem; align-items: center; }
+    .about-visual { background: var(--blue); border-radius: 20px; height: 320px; display: flex; align-items: center; justify-content: center; font-size: 8rem; }
+    .about-text h2 { font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem; letter-spacing: 2px; margin-bottom: 1rem; }
+    .about-text h2 span { color: var(--red); }
+    .about-text p { color: var(--accent); line-height: 1.8; font-size: 0.95rem; }
+
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1.5rem; margin-bottom: 4rem; }
+    .stat-card { background: var(--blue); border-radius: 16px; padding: 2rem; text-align: center; }
+    .stat-number { font-family: 'Bebas Neue', sans-serif; font-size: 3.5rem; color: var(--red); line-height: 1; }
+    .stat-label { color: var(--accent); font-size: 0.9rem; font-weight: 700; margin-top: 0.5rem; }
+
+    .team-section h2 { font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem; letter-spacing: 2px; margin-bottom: 2rem; }
+    .team-section h2 span { color: var(--red); }
+    .team-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; }
+    .team-card { background: var(--blue); border-radius: 16px; padding: 1.5rem; text-align: center; }
+    .team-avatar { font-size: 3.5rem; margin-bottom: 0.7rem; }
+    .team-name { font-weight: 800; font-size: 1rem; margin-bottom: 0.3rem; }
+    .team-role { color: var(--accent); font-size: 0.82rem; }
+
+    /* Cubo animado decorativo */
+    .spinning-cube { display: inline-block; animation: spin 4s linear infinite; font-size: 5rem; }
+    @keyframes spin { 0% { transform: rotate(-20deg); } 50% { transform: rotate(20deg); } 100% { transform: rotate(-20deg); } }
+
+    footer { background: #080f1a; padding: 2rem; text-align: center; color: var(--accent); font-size: 0.85rem; margin-top: 2rem; }
+
+    .toast { position: fixed; bottom: 2rem; right: 2rem; background: var(--red); color: #fff; padding: 1rem 1.5rem; border-radius: 10px; font-weight: 700; font-size: 0.95rem; transform: translateY(100px); opacity: 0; transition: all 0.3s; z-index: 999; }
+    .toast.show { transform: translateY(0); opacity: 1; }
+
+    @media (max-width: 700px) {
+      .about-grid { grid-template-columns: 1fr; }
+      nav ul { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="logo">
+    <div class="cube-icon"><div></div><div></div><div></div><div></div></div>
+    Cubo<span>Magic</span>
+  </a>
+  <ul>
+    <li><a href="index.html">Início</a></li>
+    <li><a href="produtos.html">Produtos</a></li>
+    <li><a href="sobre.html" class="active">Sobre</a></li>
+    <li><a href="login.html">Login</a></li>
+  </ul>
+  <a href="carrinho.html" class="cart-btn">🛒 Carrinho <span id="cart-count">0</span></a>
+</nav>
+<div class="hero-about">
+  <div class="spinning-cube"><img src="cubo.png" alt="Cubo Mágico" width="300" height="300" /></div>
+  <h1>SOBRE A <span>CUBOMAGIC</span></h1>
+  <p>Somos apaixonados por cubos mágicos e queremos compartilhar essa paixão com você.</p>
+</div>
+
+<div class="content">
+
+  <!-- Nossa história -->
+  <div class="about-grid">
+    <div class="about-visual"><img src="cubo.png" alt="Cubo Mágico" width="300" height="300" /></div>
+    <div class="about-text">
+      <h2>NOSSA <span>HISTÓRIA</span></h2>
+      <p>A CuboStore nasceu em 2020 da paixão de um grupo de speedcubers brasileiros que queriam trazer os melhores cubos do mundo para o Brasil com preços acessíveis.</p>
+      <br>
+      <p>Começamos com apenas 3 produtos e hoje contamos com um catálogo diversificado para todos os níveis — do iniciante que está montando o primeiro cubo ao competidor que busca o melhor tempo.</p>
+    </div>
+  </div>
+
+  <!-- Estatísticas -->
+  <div class="stats-grid" id="stats-grid">
+    <div class="stat-card"><div class="stat-number" id="stat-users">0</div><div class="stat-label">Clientes Cadastrados</div></div>
+    <div class="stat-card"><div class="stat-number">5</div><div class="stat-label">Produtos Disponíveis</div></div>
+    <div class="stat-card"><div class="stat-number">4.8</div><div class="stat-label">Avaliação Média ⭐</div></div>
+    <div class="stat-card"><div class="stat-number" id="stat-orders">0</div><div class="stat-label">Itens no Carrinho Agora</div></div>
+  </div>
+
+  
+</div>
+
+<footer><p>© 2026 CuboMagic.</p></footer>
+<div class="toast" id="toast"></div>
+
+<script src="app.js"></script>
+<script>
+  // Exibir dados dinâmicos do localStorage na página sobre
+  const users = getUsers();
+  const cart = getCart();
+  const totalCartItems = cart.reduce((a, i) => a + i.qty, 0);
+
+  // Animar contadores com DOM
+  function animateCounter(id, target) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    let current = 0;
+    const step = Math.ceil(target / 30);
+    const interval = setInterval(() => {
+      current += step;
+      if (current >= target) { el.textContent = target; clearInterval(interval); }
+      else el.textContent = current;
+    }, 50);
+  }
+
+  animateCounter('stat-users', users.length);
+  animateCounter('stat-orders', totalCartItems);
+
+  updateCartCount();
+</script>
+</body>
+</html>

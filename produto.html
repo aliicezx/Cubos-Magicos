@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Produto — CuboStore</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root { --red: #e63946; --blue: #1d3557; --blue-light: #457b9d; --white: #f1faee; --accent: #a8dadc; --bg: #0d1b2a; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Nunito', sans-serif; background: var(--bg); color: var(--white); }
+
+    nav { display: flex; align-items: center; justify-content: space-between; padding: 1rem 2rem; background: var(--blue); position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 20px rgba(0,0,0,0.4); }
+    .logo { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; letter-spacing: 3px; color: var(--white); text-decoration: none; display: flex; align-items: center; gap: 10px; }
+    .logo span { color: var(--red); }
+    .logo .cube-icon { width: 36px; height: 36px; display: grid; grid-template-columns: 1fr 1fr; gap: 3px; }
+    .logo .cube-icon div { border-radius: 2px; }
+    .logo .cube-icon div:nth-child(1) { background: var(--red); }
+    .logo .cube-icon div:nth-child(2) { background: #fff; }
+    .logo .cube-icon div:nth-child(3) { background: #fff; }
+    .logo .cube-icon div:nth-child(4) { background: var(--red); }
+    nav ul { list-style: none; display: flex; gap: 1.5rem; }
+    nav ul a { color: var(--accent); text-decoration: none; font-weight: 700; font-size: 0.95rem; transition: color 0.2s; }
+    nav ul a:hover { color: var(--red); }
+    .cart-btn { background: var(--red); color: #fff; border: none; padding: 0.5rem 1.2rem; border-radius: 8px; font-family: 'Nunito', sans-serif; font-weight: 800; cursor: pointer; font-size: 0.9rem; transition: background 0.2s; display: flex; align-items: center; gap: 6px; text-decoration: none; }
+    .cart-btn:hover { background: #c1121f; }
+    #cart-count { background: #fff; color: var(--red); border-radius: 50%; width: 20px; height: 20px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 800; }
+
+    .breadcrumb { padding: 1.5rem 2rem; max-width: 1200px; margin: 0 auto; }
+    .breadcrumb a { color: var(--accent); text-decoration: none; font-size: 0.9rem; }
+    .breadcrumb a:hover { color: var(--red); }
+    .breadcrumb span { color: var(--white); font-size: 0.9rem; margin: 0 0.5rem; }
+
+    .product-detail { max-width: 1000px; margin: 0 auto; padding: 2rem; display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start; }
+    .product-visual { background: linear-gradient(135deg, var(--blue), #0d2035); border-radius: 20px; height: 400px; display: flex; align-items: center; justify-content: center; font-size: 10rem; position: relative; overflow: hidden; }
+    .product-visual::before { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at 50% 50%, rgba(230,57,70,0.15), transparent 70%); }
+    .badge-big { position: absolute; top: 20px; left: 20px; background: var(--red); color: #fff; font-size: 0.8rem; font-weight: 800; padding: 5px 12px; border-radius: 20px; letter-spacing: 1px; }
+
+    .product-info h1 { font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem; letter-spacing: 2px; line-height: 1.1; margin-bottom: 0.5rem; }
+    .stars { color: #ffd700; font-size: 1rem; margin-bottom: 1rem; }
+    .price { font-size: 2.5rem; font-weight: 800; color: var(--red); margin-bottom: 1.5rem; }
+    .price small { font-size: 1rem; color: var(--accent); }
+    .product-info p { color: var(--accent); line-height: 1.7; margin-bottom: 1.5rem; font-size: 0.95rem; }
+
+    .qty-row { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; }
+    .qty-label { font-weight: 700; color: var(--white); }
+    .qty-control { display: flex; align-items: center; gap: 0; background: var(--blue); border-radius: 10px; overflow: hidden; }
+    .qty-btn { background: transparent; color: var(--white); border: none; width: 36px; height: 36px; font-size: 1.2rem; cursor: pointer; transition: background 0.2s; }
+    .qty-btn:hover { background: var(--red); }
+    #qty-value { width: 40px; text-align: center; font-weight: 800; font-size: 1rem; color: var(--white); background: transparent; border: none; outline: none; }
+
+    .btn-buy { width: 100%; background: var(--red); color: #fff; border: none; padding: 1rem; border-radius: 12px; font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 1.1rem; cursor: pointer; transition: background 0.2s, transform 0.2s; margin-bottom: 0.8rem; }
+    .btn-buy:hover { background: #c1121f; transform: translateY(-2px); }
+    .btn-cart { width: 100%; background: transparent; color: var(--accent); border: 2px solid var(--accent); padding: 1rem; border-radius: 12px; font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 1rem; cursor: pointer; transition: all 0.2s; }
+    .btn-cart:hover { background: var(--accent); color: var(--bg); }
+
+    .info-tags { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 1.5rem; }
+    .tag { background: rgba(255,255,255,0.08); color: var(--accent); padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.8rem; font-weight: 700; }
+
+    .not-found { text-align: center; padding: 5rem 2rem; color: var(--accent); }
+    .not-found h2 { font-family: 'Bebas Neue', sans-serif; font-size: 3rem; color: var(--red); margin-bottom: 1rem; }
+
+    .toast { position: fixed; bottom: 2rem; right: 2rem; background: var(--red); color: #fff; padding: 1rem 1.5rem; border-radius: 10px; font-weight: 700; font-size: 0.95rem; transform: translateY(100px); opacity: 0; transition: all 0.3s; z-index: 999; }
+    .toast.show { transform: translateY(0); opacity: 1; }
+
+    footer { background: #080f1a; padding: 2rem; text-align: center; color: var(--accent); font-size: 0.85rem; margin-top: 4rem; }
+
+    @media (max-width: 700px) {
+      .product-detail { grid-template-columns: 1fr; gap: 2rem; }
+      nav ul { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="logo">
+    <div class="cube-icon"><div></div><div></div><div></div><div></div></div>
+    Cubo<span>Store</span>
+  </a>
+  <ul>
+    <li><a href="index.html">Início</a></li>
+    <li><a href="produtos.html">Produtos</a></li>
+    <li><a href="sobre.html">Sobre</a></li>
+    <li><a href="login.html">Login</a></li>
+  </ul>
+  <a href="carrinho.html" class="cart-btn">🛒 Carrinho <span id="cart-count">0</span></a>
+</nav>
+
+<div id="page-content"></div>
+
+<div class="toast" id="toast"></div>
+<footer><p>© 2026 CuboMagic.</p></footer>
+
+<script src="app.js"></script>
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const id = parseInt(params.get('id'));
+  const product = PRODUCTS.find(p => p.id === id);
+  const content = document.getElementById('page-content');
+
+  if (!product) {
+    content.innerHTML = `
+      <div class="not-found">
+        <h2>Produto não encontrado</h2>
+        <p>O produto que você procura não existe.</p>
+        <a href="produtos.html" style="color:var(--red);font-weight:800;">← Voltar aos produtos</a>
+      </div>`;
+  } else {
+    const stars = '⭐'.repeat(Math.round(product.rating));
+    content.innerHTML = `
+      <div class="breadcrumb">
+        <a href="index.html">Início</a><span>›</span>
+        <a href="produtos.html">Produtos</a><span>›</span>
+        <span>${product.name}</span>
+      </div>
+      <div class="product-detail">
+        <div class="product-visual">
+          <span>${product.emoji}</span>
+          ${product.badge ? `<span class="badge-big">${product.badge}</span>` : ''}
+        </div>
+        <div class="product-info">
+          <h1>${product.name}</h1>
+          <div class="stars">${stars} <span style="color:var(--accent);font-size:0.85rem">${product.rating} (${product.reviews} avaliações)</span></div>
+          <div class="price">R$ ${product.price.toFixed(2).replace('.',',')} <small>ou 3x de R$ ${(product.price/3).toFixed(2).replace('.',',')} sem juros</small></div>
+          <p>${product.details}</p>
+          <div class="qty-row">
+            <span class="qty-label">Quantidade:</span>
+            <div class="qty-control">
+              <button class="qty-btn" onclick="changeQty(-1)">−</button>
+              <input type="text" id="qty-value" value="1" readonly>
+              <button class="qty-btn" onclick="changeQty(1)">+</button>
+            </div>
+          </div>
+          <button class="btn-buy" onclick="buyNow()">⚡ Comprar Agora</button>
+          <button class="btn-cart" onclick="addToCartQty()">🛒 Adicionar ao Carrinho</button>
+          <div class="info-tags">
+            <span class="tag">📦 Frete grátis acima de R$99</span>
+            <span class="tag">🔄 30 dias para troca</span>
+            <span class="tag">✅ Em estoque</span>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  function changeQty(delta) {
+    const el = document.getElementById('qty-value');
+    let val = parseInt(el.value) + delta;
+    if (val < 1) val = 1;
+    if (val > 10) val = 10;
+    el.value = val;
+  }
+
+  function addToCartQty() {
+    const qty = parseInt(document.getElementById('qty-value').value);
+    for (let i = 0; i < qty; i++) addToCart(product.id);
+    // Override toast for qty > 1
+    if (qty > 1) showToast(`✅ ${qty}x "${product.name}" adicionados!`);
+  }
+
+  function buyNow() {
+    addToCartQty();
+    setTimeout(() => window.location.href = 'carrinho.html', 500);
+  }
+
+  updateCartCount();
+</script>
+</body>
+</html>

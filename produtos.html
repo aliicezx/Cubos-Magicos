@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Produtos — CuboStore</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --red: #e63946; --blue: #1d3557; --blue-light: #457b9d;
+      --white: #f1faee; --accent: #a8dadc; --bg: #0d1b2a;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Nunito', sans-serif; background: var(--bg); color: var(--white); }
+
+    nav {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1rem 2rem; background: var(--blue);
+      position: sticky; top: 0; z-index: 100;
+      box-shadow: 0 2px 20px rgba(0,0,0,0.4);
+    }
+    .logo { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; letter-spacing: 3px; color: var(--white); text-decoration: none; display: flex; align-items: center; gap: 10px; }
+    .logo span { color: var(--red); }
+    .logo .cube-icon { width: 36px; height: 36px; display: grid; grid-template-columns: 1fr 1fr; gap: 3px; }
+    .logo .cube-icon div { border-radius: 2px; }
+    .logo .cube-icon div:nth-child(1) { background: var(--red); }
+    .logo .cube-icon div:nth-child(2) { background: #fff; }
+    .logo .cube-icon div:nth-child(3) { background: #fff; }
+    .logo .cube-icon div:nth-child(4) { background: var(--red); }
+    nav ul { list-style: none; display: flex; gap: 1.5rem; }
+    nav ul a { color: var(--accent); text-decoration: none; font-weight: 700; font-size: 0.95rem; transition: color 0.2s; }
+    nav ul a:hover, nav ul a.active { color: var(--red); }
+    .cart-btn { background: var(--red); color: #fff; border: none; padding: 0.5rem 1.2rem; border-radius: 8px; font-family: 'Nunito', sans-serif; font-weight: 800; cursor: pointer; font-size: 0.9rem; transition: background 0.2s; display: flex; align-items: center; gap: 6px; text-decoration: none; }
+    .cart-btn:hover { background: #c1121f; }
+    #cart-count { background: #fff; color: var(--red); border-radius: 50%; width: 20px; height: 20px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 800; }
+
+    .page-header { background: var(--blue); padding: 3rem 2rem; text-align: center; }
+    .page-header h1 { font-family: 'Bebas Neue', sans-serif; font-size: 3.5rem; letter-spacing: 3px; }
+    .page-header h1 span { color: var(--red); }
+    .page-header p { color: var(--accent); margin-top: 0.5rem; }
+
+    .filters { display: flex; gap: 0.7rem; padding: 2rem; flex-wrap: wrap; justify-content: center; }
+    .filter-btn { background: transparent; color: var(--accent); border: 2px solid var(--blue-light); padding: 0.4rem 1.2rem; border-radius: 20px; font-family: 'Nunito', sans-serif; font-weight: 700; cursor: pointer; transition: all 0.2s; font-size: 0.9rem; }
+    .filter-btn:hover, .filter-btn.active { background: var(--red); border-color: var(--red); color: #fff; }
+
+    .products-section { max-width: 1200px; margin: 0 auto; padding: 0 2rem 4rem; }
+    .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1.5rem; }
+    .product-card { background: var(--blue); border-radius: 16px; overflow: hidden; transition: transform 0.3s, box-shadow 0.3s; cursor: pointer; border: 1px solid rgba(255,255,255,0.05); }
+    .product-card:hover { transform: translateY(-6px); box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
+    .product-img { height: 200px; display: flex; align-items: center; justify-content: center; font-size: 5rem; background: linear-gradient(135deg, #1a3050, #0d2035); position: relative; }
+    .product-badge { position: absolute; top: 10px; right: 10px; background: var(--red); color: #fff; font-size: 0.7rem; font-weight: 800; padding: 3px 8px; border-radius: 20px; letter-spacing: 1px; }
+    .product-info { padding: 1.2rem; }
+    .product-name { font-weight: 800; font-size: 1rem; color: var(--white); margin-bottom: 0.3rem; }
+    .product-desc { font-size: 0.82rem; color: var(--accent); margin-bottom: 1rem; line-height: 1.5; }
+    .product-footer { display: flex; align-items: center; justify-content: space-between; }
+    .product-price { font-size: 1.3rem; font-weight: 800; color: var(--red); }
+    .add-cart-btn { background: var(--red); color: #fff; border: none; padding: 0.5rem 1rem; border-radius: 8px; font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 0.85rem; cursor: pointer; transition: background 0.2s; }
+    .add-cart-btn:hover { background: #c1121f; }
+
+    .stars { color: #ffd700; font-size: 0.8rem; margin-bottom: 0.3rem; }
+
+    .no-results { text-align: center; padding: 4rem; color: var(--accent); font-size: 1.1rem; }
+
+    .toast { position: fixed; bottom: 2rem; right: 2rem; background: var(--red); color: #fff; padding: 1rem 1.5rem; border-radius: 10px; font-weight: 700; font-size: 0.95rem; transform: translateY(100px); opacity: 0; transition: all 0.3s; z-index: 999; }
+    .toast.show { transform: translateY(0); opacity: 1; }
+
+    footer { background: #080f1a; padding: 2rem; text-align: center; color: var(--accent); font-size: 0.85rem; }
+
+    @media (max-width: 600px) { nav ul { display: none; } }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="logo">
+    <div class="cube-icon"><div></div><div></div><div></div><div></div></div>
+    Cubo<span>Magic</span>
+  </a>
+  <ul>
+    <li><a href="index.html">Início</a></li>
+    <li><a href="produtos.html" class="active">Produtos</a></li>
+    <li><a href="sobre.html">Sobre</a></li>
+    <li><a href="login.html">Login</a></li>
+  </ul>
+  <a href="carrinho.html" class="cart-btn">🛒 Carrinho <span id="cart-count">0</span></a>
+</nav>
+
+<div class="page-header">
+  <h1>NOSSOS <span>PRODUTOS</span></h1>
+  <p>Encontre o cubo perfeito para você</p>
+</div>
+
+<div class="filters">
+  <button class="filter-btn active" onclick="filterProducts('Todos', this)">Todos</button>
+  <button class="filter-btn" onclick="filterProducts('2x2', this)">2x2</button>
+  <button class="filter-btn" onclick="filterProducts('3x3', this)">3x3</button>
+  <button class="filter-btn" onclick="filterProducts('4x4', this)">4x4</button>
+  <button class="filter-btn" onclick="filterProducts('Especial', this)">Especial</button>
+  <button class="filter-btn" onclick="filterProducts('Kit', this)">Kits</button>
+</div>
+
+<div class="products-section">
+  <div class="products-grid" id="products-grid"></div>
+</div>
+
+<footer><p>© 2026 CuboMagic.</p></footer>
+
+<div class="toast" id="toast"></div>
+
+<script src="app.js"></script>
+<script>
+  let currentFilter = 'Todos';
+
+  function renderProducts(filter) {
+    const grid = document.getElementById('products-grid');
+    const filtered = filter === 'Todos' ? PRODUCTS : PRODUCTS.filter(p => p.category === filter);
+    
+    if (filtered.length === 0) {
+      grid.innerHTML = '<div class="no-results">Nenhum produto encontrado nessa categoria.</div>';
+      return;
+    }
+
+    // DOM manipulation: clear and rebuild
+    grid.innerHTML = '';
+    filtered.forEach(p => {
+      const stars = '⭐'.repeat(Math.round(p.rating));
+      const card = document.createElement('div');
+      card.className = 'product-card';
+      card.innerHTML = `
+        <div class="product-img">
+          <span>${p.emoji}</span>
+          ${p.badge ? `<span class="product-badge">${p.badge}</span>` : ''}
+        </div>
+        <div class="product-info">
+          <div class="stars">${stars} <span style="color:var(--accent);font-size:0.75rem">(${p.reviews})</span></div>
+          <div class="product-name">${p.name}</div>
+          <div class="product-desc">${p.desc}</div>
+          <div class="product-footer">
+            <span class="product-price">R$ ${p.price.toFixed(2).replace('.',',')}</span>
+            <button class="add-cart-btn" onclick="addToCart(${p.id})">+ Carrinho</button>
+          </div>
+        </div>`;
+      card.querySelector('.product-img').addEventListener('click', () => {
+        window.location.href = `produto.html?id=${p.id}`;
+      });
+      card.querySelector('.product-name').addEventListener('click', () => {
+        window.location.href = `produto.html?id=${p.id}`;
+      });
+      grid.appendChild(card);
+    });
+  }
+
+  function filterProducts(cat, btn) {
+    currentFilter = cat;
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderProducts(cat);
+  }
+
+  renderProducts('Todos');
+  updateCartCount();
+</script>
+</body>
+</html>
